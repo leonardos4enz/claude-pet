@@ -1,0 +1,14 @@
+{
+  "name": "claude-pet",
+  "description": "Claude Pet: una mascota viva arriba del chat de Claude Code",
+  "owner": {
+    "name": "Leo"
+  },
+  "plugins": [
+    {
+      "name": "claude-pet",
+      "source": "./claude-pet",
+      "description": "Claude Pet: Clawd vivo arriba del chat, con datos de la sesión, radar de conversaciones y accesorios"
+    }
+  ]
+}

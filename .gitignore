@@ -1,0 +1,10 @@
+# tipos que genera el motor al cargar el plugin
+claude-pet/.claude-plugin/types/
+*.log
+.DS_Store
+
+# el tráiler y sus archivos de trabajo (varios GB) no van en el repo
+video/
+# estado del radar (nunca debe ir al repo: trae temas de tus conversaciones)
+claude-pet/clawd-vivo/
+claude-pet/.radar/
