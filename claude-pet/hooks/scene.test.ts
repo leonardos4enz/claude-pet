@@ -203,3 +203,12 @@ test('easter eggs: nivel 11 secreto, frases, temporada y shiny', () => {
   expect(petKey({ ...v, shiny: true })).not.toBe(petKey(v))
   expect(petScene(v, { ...defaultPrefs(), accessory: 'santa' })).not.toBe(petScene(v))
 })
+
+test('/pet atuendo off: desde el nivel 5 se ve como el 4', () => {
+  const v = setMood(initialView(), 'idle', 0)
+  const sin = { ...defaultPrefs(), stageLook: false }
+  expect(applyPetCommand(defaultPrefs(), 'atuendo off')![0].stageLook).toBe(false)
+  expect(petScene(v, sin, 'deidad')).toBe(petScene(v, sin, 'hacker'))     // sin alas ni aureola
+  expect(petScene(v, sin, 'ninja')).not.toBe(petScene(v, defaultPrefs(), 'ninja'))   // sin bufanda
+  expect(petScene(v, sin, 'cria')).toBe(petScene(v, defaultPrefs(), 'cria'))        // antes del 5 no cambia
+})

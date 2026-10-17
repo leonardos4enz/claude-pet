@@ -67,6 +67,7 @@ export type Prefs = {
   memes: boolean      // momentos meme (vibe coding, this is fine…)
   radar: boolean      // mostrar las otras conversaciones
   permissions: boolean // alerta «necesita tu permiso» (apágala si usas el modo auto)
+  stageLook: boolean  // atuendo de la etapa (bufanda, capa, alas…) desde el nivel 5; apagado = se ve como el nivel 4
   comments: boolean   // comentarios de la IA sobre lo que hace Claude (gasta tokens; apagado por defecto)
 }
 

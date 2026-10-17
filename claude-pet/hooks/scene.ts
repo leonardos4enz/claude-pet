@@ -63,7 +63,7 @@ export const COLOR_NAMES: Record<string, string> = {
 }
 
 export function defaultPrefs(): Prefs {
-  return { name: 'Claude', color: '#d97757', accessory: 'ninguno', sound: false, memes: true, radar: true, permissions: true, comments: false }
+  return { name: 'Claude', color: '#d97757', accessory: 'ninguno', sound: false, memes: true, radar: true, permissions: true, stageLook: true, comments: false }
 }
 
 /** «azul» o «#5b8def» → '#5b8def'; '' si no es un color. */
@@ -88,6 +88,7 @@ export function cleanPrefs(raw: unknown): Prefs {
     radar: typeof r.radar === 'boolean' ? r.radar : d.radar,
     comments: typeof r.comments === 'boolean' ? r.comments : d.comments,
     permissions: typeof r.permissions === 'boolean' ? r.permissions : d.permissions,
+    stageLook: typeof r.stageLook === 'boolean' ? r.stageLook : d.stageLook,
   }
 }
 
@@ -110,10 +111,10 @@ export function applyPetCommand(p: Prefs, args: string): [Prefs, string] | null 
       if (!ACCESSORIES.includes(a)) return [p, `Accesorios: ${ACCESSORIES.join(', ')}`]
       return [{ ...p, accessory: a }, a === 'ninguno' ? 'Sin accesorio' : `Me puse: ${a}`]
     }
-    case 'sonido': case 'memes': case 'radar': case 'comentarios': case 'permisos': {
+    case 'sonido': case 'memes': case 'radar': case 'comentarios': case 'permisos': case 'atuendo': {
       const v = onOff(val)
-      const key = cmd.toLowerCase() as 'sonido' | 'memes' | 'radar' | 'comentarios' | 'permisos'
-      const field = key === 'sonido' ? 'sound' : key === 'comentarios' ? 'comments' : key === 'permisos' ? 'permissions' : key
+      const key = cmd.toLowerCase() as 'sonido' | 'memes' | 'radar' | 'comentarios' | 'permisos' | 'atuendo'
+      const field = key === 'sonido' ? 'sound' : key === 'comentarios' ? 'comments' : key === 'permisos' ? 'permissions' : key === 'atuendo' ? 'stageLook' : key
       if (v === null) return [p, `Usa: /pet ${key} on | off (ahora: ${p[field] ? 'on' : 'off'})`]
       return [{ ...p, [field]: v }, `${key[0].toUpperCase() + key.slice(1)}: ${v ? 'activado' : 'desactivado'}`]
     }
@@ -129,6 +130,7 @@ export const PET_HELP = [
   `/pet accesorio <${ACCESSORIES.join('|')}>`,
   '/pet sonido on|off · /pet memes on|off · /pet radar on|off',
   '/pet permisos on|off — alerta de permiso (apágala si usas el modo auto)',
+  '/pet atuendo on|off — bufanda, capa, alas… de las etapas (off: se ve como el nivel 4)',
   '/pet comentarios on|off — la IA comenta lo que hace Claude (gasta tokens; apagado por defecto)',
   '/pet nivel — evolución y logros · /pet tarjeta — imagen para compartir',
 ].join('\n')
@@ -881,7 +883,8 @@ function rays(color: string, ground: number): string {
 function stage(v: View, prefs: Prefs = defaultPrefs(), st: StageId = 'aprendiz'): string {
   const body = v.shiny ? '#f2c14e' : prefs.color   // shiny: dorado
   const ground = 138
-  const n = STAGES.findIndex(x => x.id === st) + 1    // 1..10
+  // con «/pet atuendo off» desde el nivel 5 se ve como el 4: sin bufanda, orbes, capa, rayos, alas ni aureola
+  const n = Math.min(STAGES.findIndex(x => x.id === st) + 1, prefs.stageLook === false ? 4 : 99)    // 1..11
   const c = st === 'cria' ? 5 : 7                    // la cría es más chiquita
   const busy = v.mood === 'think' || v.mood === 'work' || v.mood === 'write'
   const tier = /opus|fable/i.test(v.model) ? 2 : 1   // el modelo define el tamaño de la mente
@@ -956,7 +959,7 @@ export function radarItems(others: Other[], now: number, selfId: string): RadarI
 
 /** Lo que cambia el dibujo de Clawd: si no cambia, el Svg no se toca y su animación sigue corriendo. */
 export function petKey(v: View, prefs: Prefs = defaultPrefs(), st: StageId = 'aprendiz'): string {
-  return `${v.mood}|${v.talking ? 1 : 0}|${/opus|fable/i.test(v.model) ? 2 : 1}|${Math.min(v.agents, 4)}|${prefs.color}|${prefs.accessory}|${st}|${v.shiny ? 1 : 0}`
+  return `${v.mood}|${v.talking ? 1 : 0}|${/opus|fable/i.test(v.model) ? 2 : 1}|${Math.min(v.agents, 4)}|${prefs.color}|${prefs.accessory}|${st}|${v.shiny ? 1 : 0}|${prefs.stageLook === false ? 0 : 1}`
 }
 
 /** Clawd con su red neuronal circular, solo (los textos van aparte, como texto nativo). */

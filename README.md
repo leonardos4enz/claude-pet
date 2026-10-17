@@ -56,6 +56,7 @@ con su estado (te necesita, trabajando, te espera, en pausa). Cada conversación
 /pet comentarios on       la IA comenta lo que hace Claude (gasta tokens; apagado por defecto)
 /pet memes off
 /pet radar off
+/pet atuendo off          desde el nivel 5 se ve como el 4 (sin bufanda, capa, alas…)
 /pet ayuda
 ```
 
